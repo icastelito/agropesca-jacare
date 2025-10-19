@@ -10,8 +10,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Habilita a extensão uuid-ossp para geração de UUIDs no PostgreSQL
-        DB::statement('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"');
+        // Habilita a extensão uuid-ossp apenas para PostgreSQL
+        // SQLite já tem suporte nativo a UUID
+        if (DB::getDriverName() === 'pgsql') {
+            DB::statement('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"');
+        }
     }
 
     /**
@@ -19,6 +22,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        DB::statement('DROP EXTENSION IF EXISTS "uuid-ossp"');
+        // Remove a extensão apenas do PostgreSQL
+        if (DB::getDriverName() === 'pgsql') {
+            DB::statement('DROP EXTENSION IF EXISTS "uuid-ossp"');
+        }
     }
 };
