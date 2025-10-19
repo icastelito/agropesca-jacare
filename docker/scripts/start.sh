@@ -27,6 +27,19 @@ php artisan route:clear
 php artisan view:clear
 php artisan cache:clear
 
+# Criar banco de dados se não existir
+echo "🗄️  Verificando banco de dados..."
+DB_NAME="${DB_DATABASE:-agropesca_jacare}"
+
+# Tentar criar o banco usando psql se estiver disponível
+if command -v psql >/dev/null 2>&1; then
+    echo "Criando banco de dados $DB_NAME se não existir..."
+    PGPASSWORD="${DB_PASSWORD}" psql -h "${DB_HOST}" -U "${DB_USERNAME}" -p "${DB_PORT:-5432}" -tc "SELECT 1 FROM pg_database WHERE datname = '$DB_NAME'" | grep -q 1 || \
+    PGPASSWORD="${DB_PASSWORD}" psql -h "${DB_HOST}" -U "${DB_USERNAME}" -p "${DB_PORT:-5432}" -c "CREATE DATABASE $DB_NAME"
+else
+    echo "⚠️  psql não disponível, assumindo que o banco existe..."
+fi
+
 # Executar migrations
 echo "🗄️  Executando migrations..."
 php artisan migrate --force
