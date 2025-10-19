@@ -157,6 +157,13 @@ docker compose -f docker-compose.dev.yml down
 php artisan migrate
 php artisan migrate:fresh --seed
 
+# Seeds (dados de teste)
+php artisan db:seed                    # Executar todos os seeders
+php artisan db:seed --class=ProdutorRuralSeeder
+php artisan db:seed --class=PropriedadeSeeder
+php artisan db:seed --class=UnidadeProducaoSeeder
+php artisan db:seed --class=RebanhoSeeder
+
 # Cache
 php artisan config:cache
 php artisan route:cache
@@ -164,7 +171,10 @@ php artisan view:cache
 php artisan cache:clear
 
 # Testes
-php artisan test
+php artisan test                       # Todos os testes
+php artisan test --testsuite=Feature   # Testes de integração
+php artisan test --testsuite=Unit      # Testes unitários
+php artisan test --filter=AuthApiTest  # Teste específico
 ```
 
 ### NPM
@@ -233,17 +243,60 @@ docker run -d \
 
 ## Testes
 
+### Testes PHP (PHPUnit)
+
 ```bash
-# Testes PHP
+# Executar todos os testes
 php artisan test
+
+# Testes por tipo
+php artisan test --testsuite=Feature   # API e integração
+php artisan test --testsuite=Unit      # Unitários
+
+# Testes específicos
+php artisan test --filter=AuthApiTest
+php artisan test --filter=ProdutorRuralApiTest
+php artisan test --filter=PropriedadeApiTest
+php artisan test --filter=DashboardApiTest
+
+# Com coverage
 php artisan test --coverage
-
-# Testes JavaScript
-npm run test
-
-# Testes E2E (Cypress)
-npx cypress open
 ```
+
+### Testes Disponíveis
+
+**Feature (API):**
+- `AuthApiTest`: Autenticação (login, logout, registro)
+- `ProdutorRuralApiTest`: CRUD de produtores rurais
+- `PropriedadeApiTest`: CRUD de propriedades
+- `DashboardApiTest`: Endpoints de estatísticas
+
+**Unit:**
+- Validações de models e helpers
+
+## Seeds
+
+O sistema inclui seeders para popular o banco com dados de teste:
+
+```bash
+# Executar todos (ordem: ProdutorRural > Propriedade > UnidadeProducao > Rebanho)
+php artisan db:seed
+
+# Executar seeder específico
+php artisan db:seed --class=ProdutorRuralSeeder
+php artisan db:seed --class=PropriedadeSeeder
+php artisan db:seed --class=UnidadeProducaoSeeder
+php artisan db:seed --class=RebanhoSeeder
+
+# Resetar e popular novamente
+php artisan migrate:fresh --seed
+```
+
+**Dados gerados:**
+- 50 produtores rurais com CPF/CNPJ válidos
+- 100 propriedades distribuídas por municípios
+- 200 unidades de produção com culturas variadas
+- 150 rebanhos com diferentes espécies
 
 ## Exemplos de Relatórios
 
