@@ -1,0 +1,73 @@
+# Dockerfile para Desenvolvimento
+# Com hot reload e ferramentas de debug
+
+FROM php:8.2-fpm-alpine
+
+# Instalar dependências do sistema em etapas separadas
+RUN apk add --no-cache \
+    nginx \
+    supervisor \
+    postgresql-dev \
+    libzip-dev \
+    zip \
+    unzip \
+    git \
+    curl \
+    bash \
+    nodejs \
+    npm
+
+# Instalar dependências para compilação de extensões PHP
+RUN apk add --no-cache \
+    oniguruma-dev \
+    libpng-dev \
+    libjpeg-turbo-dev \
+    freetype-dev \
+    $PHPIZE_DEPS
+
+# Instalar extensões PHP uma por vez para facilitar debug
+RUN docker-php-ext-install -j$(nproc) pdo
+RUN docker-php-ext-install -j$(nproc) pdo_pgsql
+RUN docker-php-ext-install -j$(nproc) pgsql
+RUN docker-php-ext-install -j$(nproc) mbstring
+RUN docker-php-ext-install -j$(nproc) zip
+RUN docker-php-ext-install -j$(nproc) exif
+RUN docker-php-ext-install -j$(nproc) pcntl
+RUN docker-php-ext-install -j$(nproc) bcmath
+
+# Instalar GD com suporte a FreeType e JPEG
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) gd
+
+# Instalar Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Nota: Xdebug removido por causar problemas no build
+# Se precisar de Xdebug, instale manualmente após o container estar rodando:
+# docker compose -f docker-compose.dev.yml exec app apk add --no-cache linux-headers
+# docker compose -f docker-compose.dev.yml exec app pecl install xdebug
+# docker compose -f docker-compose.dev.yml exec app docker-php-ext-enable xdebug
+
+# Configurar PHP para desenvolvimento
+RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
+
+# Copiar configurações
+COPY docker/php/php-fpm-dev.conf /usr/local/etc/php-fpm.d/www.conf
+COPY docker/nginx/nginx.conf /etc/nginx/nginx.conf
+COPY docker/nginx/default-dev.conf /etc/nginx/http.d/default.conf
+COPY docker/supervisor/supervisord-dev.conf /etc/supervisor/conf.d/supervisord.conf
+
+# Criar diretórios necessários
+RUN mkdir -p /var/log/supervisor /var/log/php-fpm /var/log/nginx
+
+WORKDIR /var/www/html
+
+# Expor portas
+EXPOSE 8080 5173
+
+# Healthcheck
+HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
+    CMD curl -f http://localhost:8080/health || exit 1
+
+# Supervisor para gerenciar os processos
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]

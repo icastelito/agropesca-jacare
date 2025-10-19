@@ -1,0 +1,110 @@
+# Docker Compose para Desenvolvimento
+# Inclui banco de dados PostgreSQL e todas as ferramentas de dev
+
+services:
+  # Aplicação Laravel + Vite
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: agropesca_app_dev
+    restart: unless-stopped
+    ports:
+      - "8080:8080"  # Nginx/Laravel
+      - "5173:5173"  # Vite HMR
+    volumes:
+      - .:/var/www/html
+      - ./storage:/var/www/html/storage
+      - ./bootstrap/cache:/var/www/html/bootstrap/cache
+      - /var/www/html/node_modules  # Previne conflito com host
+      - /var/www/html/vendor        # Previne conflito com host
+    environment:
+      - APP_ENV=local
+      - APP_DEBUG=true
+      - APP_KEY=${APP_KEY}
+      - DB_CONNECTION=pgsql
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_DATABASE=agropesca_jacare
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=postgres
+      - VITE_HOST=0.0.0.0
+      - VITE_PORT=5173
+    networks:
+      - agropesca_network
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: >
+      sh -c "
+        mkdir -p /var/log/supervisor /var/log/php-fpm /var/log/nginx &&
+        composer install &&
+        npm install &&
+        php artisan key:generate --force || true &&
+        php artisan migrate --force || true &&
+        php artisan storage:link || true &&
+        php artisan config:clear &&
+        /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
+      "
+
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: agropesca_postgres_dev
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: agropesca_jacare
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres_data_dev:/var/lib/postgresql/data
+    networks:
+      - agropesca_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # pgAdmin - Interface web para PostgreSQL
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: agropesca_pgadmin_dev
+    restart: unless-stopped
+    ports:
+      - "5050:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: 'False'
+    volumes:
+      - pgadmin_data_dev:/var/lib/pgadmin
+    networks:
+      - agropesca_network
+    depends_on:
+      - postgres
+
+  # Mailpit - Captura de emails em desenvolvimento
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: agropesca_mailpit_dev
+    restart: unless-stopped
+    ports:
+      - "8025:8025"  # Interface web
+      - "1025:1025"  # SMTP
+    networks:
+      - agropesca_network
+
+volumes:
+  postgres_data_dev:
+    driver: local
+  pgadmin_data_dev:
+    driver: local
+
+networks:
+  agropesca_network:
+    driver: bridge

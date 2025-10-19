@@ -1,0 +1,118 @@
+/* PrimeVue Theme - Lara Light Blue (mesmo do app.js) */
+
+body{
+	font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+}
+
+/* Espaçamento global para ícones e textos */
+.flex.align-items-center.gap-2 > i,
+.flex.align-items-center > i:not(:last-child) {
+	margin-right: 0.5rem;
+}
+
+/* Espaçamento entre ícones e labels em títulos de cards */
+.p-card-title i + span,
+.p-card-title i + * {
+	margin-left: 0.5rem;
+}
+
+/* Espaçamento entre botões em grupos de ação */
+.action-buttons {
+	display: flex;
+	gap: 0.5rem;
+	justify-content: center;
+}
+
+/* Espaçamento em header actions */
+.header-actions {
+	display: flex;
+	gap: 0.75rem;
+}
+
+/* Espaçamento em filter actions */
+.filters-actions {
+	display: flex;
+	gap: 0.75rem;
+	margin-top: 1rem;
+}
+
+/* Espaçamento em export sections */
+.export-buttons {
+	display: flex;
+	gap: 0.75rem;
+}
+
+/* Espaçamento entre cards */
+.mb-3 {
+	margin-bottom: 1.5rem;
+}
+
+/* Espaçamento para listas de items com ícones */
+ul li i {
+	margin-right: 0.5rem;
+}
+
+/* Espaçamento em info items */
+.export-info {
+	display: flex;
+	gap: 1rem;
+	align-items: flex-start;
+}
+
+.export-info i {
+	margin-right: 0.5rem;
+}
+
+/* Garantir espaçamento em divs flex */
+.flex.gap-2 {
+	gap: 0.5rem;
+}
+
+.flex.gap-3 {
+	gap: 0.75rem;
+}
+
+/* Espaçamento entre badge e botões */
+.badge-total + * {
+	margin-left: 0.75rem;
+}
+
+/* Espaçamento em títulos de cards com múltiplos elementos */
+.p-card-title .flex.gap-3 {
+	gap: 1rem;
+}
+
+/* PrimeVue Toast overrides: neutral look with colored left accent per severity */
+.layout-wrapper .p-toast .p-toast-message {
+	background-color: #ffffff !important;
+	color: #0f172a;
+	border-left: 4px solid transparent;
+	border: 1px solid #e6e9ef;
+	border-radius: 8px;
+	padding: 0.75rem 1rem;
+	box-shadow: 0 6px 18px rgba(2,6,23,0.08);
+	min-width: 280px;
+	display: flex;
+	gap: 0.75rem;
+	align-items: center;
+}
+.layout-wrapper .p-toast .p-toast-message .p-toast-message-content {
+	padding: 0;
+}
+.layout-wrapper .p-toast .p-toast-message .p-toast-summary {
+	color: #0f172a;
+	font-weight: 700;
+}
+.layout-wrapper .p-toast .p-toast-message .p-toast-detail {
+	color: #374151;
+	font-size: 0.95rem;
+}
+.layout-wrapper .p-toast .p-toast-message-success { border-left-color: #16a34a; }
+.layout-wrapper .p-toast .p-toast-message-error { border-left-color: #dc2626; }
+.layout-wrapper .p-toast .p-toast-message-info { border-left-color: #0ea5e9; }
+.layout-wrapper .p-toast .p-toast-message-warn { border-left-color: #f59e0b; }
+
+.layout-wrapper .p-toast .p-toast-message .p-toast-icon {
+	color: inherit;
+	font-size: 1.15rem;
+}
