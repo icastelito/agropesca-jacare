@@ -115,19 +115,7 @@ const exportarRebanhosPdf = () => {
     });
 };
 
-// Visualizar prévia do PDF
-const visualizarPdfPrevia = () => {
-    if (!produtorSelecionado.value) {
-        toast.add({
-            severity: 'warn',
-            summary: 'Atenção',
-            detail: 'Selecione um produtor para visualizar',
-            life: 3000,
-        });
-        return;
-    }
-    window.open(`/exportar/rebanhos/pdf/${produtorSelecionado.value}?preview=true`, '_blank');
-};
+
 
 // Calcular totais
 const totalPropriedades = () => {
@@ -338,13 +326,7 @@ const totalHectares = () => {
                             </div>
                         </div>
                         <div class="flex gap-2">
-                            <Button
-                                label="Visualizar"
-                                icon="pi pi-eye"
-                                @click="visualizarPdfPrevia"
-                                severity="info"
-                                outlined
-                            />
+                         
                             <Button
                                 label="Baixar PDF"
                                 icon="pi pi-download"

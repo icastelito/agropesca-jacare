@@ -225,7 +225,7 @@ const cancel = () => {
                                 <!-- Município -->
                                 <div class="col-12 md:col-5">
                                     <div class="field">
-                                        <label for="municipio">Munic�pio <span class="text-red-500">*</span>Município</label>
+                                        <label for="municipio">Município <span class="text-red-500">*</span></label>
                                         <InputText
                                             id="municipio"
                                             v-model="form.municipio"

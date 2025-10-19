@@ -88,17 +88,6 @@ services:
     depends_on:
       - postgres
 
-  # Mailpit - Captura de emails em desenvolvimento
-  mailpit:
-    image: axllent/mailpit:latest
-    container_name: agropesca_mailpit_dev
-    restart: unless-stopped
-    ports:
-      - "8025:8025"  # Interface web
-      - "1025:1025"  # SMTP
-    networks:
-      - agropesca_network
-
 volumes:
   postgres_data_dev:
     driver: local

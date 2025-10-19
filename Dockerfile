@@ -1,5 +1,5 @@
 # Dockerfile Multi-stage para Produção
-# Build otimizado para Railway e ambientes de produção
+# Build otimizado para ambientes de produção
 
 # Stage 1: Build do Frontend
 FROM node:20-alpine AS frontend-builder
@@ -64,6 +64,7 @@ RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
 # Copiar configurações customizadas
 COPY docker/php/php-fpm.conf /usr/local/etc/php-fpm.d/www.conf
+COPY docker/php/uploads.ini /usr/local/etc/php/conf.d/uploads.ini
 COPY docker/php/opcache.ini /usr/local/etc/php/conf.d/opcache.ini
 COPY docker/nginx/nginx.conf /etc/nginx/nginx.conf
 COPY docker/nginx/default.conf /etc/nginx/http.d/default.conf

@@ -197,33 +197,11 @@ npm run test
 | Aplicação     | http://localhost:8080    | -                    |
 | Vite HMR      | http://localhost:5173    | -                    |
 | pgAdmin       | http://localhost:5050    | admin@example.com / admin |
-| Mailpit       | http://localhost:8025    | -                    |
 | PostgreSQL    | localhost:5432           | postgres / postgres  |
 
 ## Deploy
 
-### Railway
-
-1. Conectar repositório GitHub ao Railway
-2. Adicionar serviço PostgreSQL
-3. Configurar variáveis de ambiente:
-
-```
-APP_NAME="Agropesca Jacare"
-APP_ENV=production
-APP_DEBUG=false
-APP_URL=https://seu-dominio.railway.app
-DB_CONNECTION=pgsql
-DB_HOST=${{Postgres.PGHOST}}
-DB_PORT=${{Postgres.PGPORT}}
-DB_DATABASE=${{Postgres.PGDATABASE}}
-DB_USERNAME=${{Postgres.PGUSER}}
-DB_PASSWORD=${{Postgres.PGPASSWORD}}
-```
-
-4. Deploy automático via `railway.json`
-
-### Produção Manual
+### Produção Docker
 
 ```bash
 # Build da imagem Docker
